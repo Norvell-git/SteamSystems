@@ -3,7 +3,7 @@
 
 Modelling parameters taken from Sun and Smith 2015 (Performance Modeling of New and Existing Steam Turbines).
 
-## *Class* turbine.Turbine(kwargs)
+## *Class* turbine.Turbine(\*\*kwargs)
 ### Essential Parameters:
 P_1, P_2  - Pressurse (inlet, outlet) bara
 T_1       - Temperature (inlet) degC
