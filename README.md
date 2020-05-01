@@ -6,10 +6,15 @@ Modelling parameters taken from Sun and Smith 2015 (Performance Modeling of New 
 ## *Class* turbine.Turbine(\*\*kwargs)
 ### Essential Parameters:
 P_1, P_2  - Pressurse (inlet, outlet) bara
+
 T_1       - Temperature (inlet) degC
 
 ### Optional Parameters:
+m_act     - Actual mass flowrate of steam (kg/s)
 
+m_rat     - Ratio of actual to maximum flowrate
+
+m_max     - Maximum flowrate of steam through the turbine (kg/s)
 
 ## Dependencies:
 * iapws (built using v1.4.1)
