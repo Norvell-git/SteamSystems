@@ -24,6 +24,5 @@ Q         - Heat content of the outlet stream (kW)
 
 ## To do
 
-* Implement heat spec model
 * Implement work spec model
 
