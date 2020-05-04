@@ -16,6 +16,8 @@ m_rat     - Ratio of actual to maximum flowrate
 
 m_max     - Maximum flowrate of steam through the turbine (kg/s)
 
+Q         - Heat content of the outlet stream (kW)
+
 ## Dependencies:
 * iapws (built using v1.4.1)
 * numpi-scipy
