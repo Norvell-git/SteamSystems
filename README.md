@@ -25,4 +25,6 @@ Q         - Heat content of the outlet stream (kW)
 ## To do
 
 * Implement work spec model
+* Exception handling
+* Expand on methods
 
