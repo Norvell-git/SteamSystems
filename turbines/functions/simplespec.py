@@ -10,7 +10,8 @@ Assuming: inlet(IAPWS97) and outlet_IS(IAPWS97) are defined
 """
 
 from iapws import IAPWS97
-from .functions import (f_abc, f_dh_IS, f_n, f_Wint, f_W, f_h_2)
+
+from .base import (f_abc, f_dh_IS, f_n, f_Wint, f_W, f_h_2)
 
 def simple(inlet, outlet_IS, m_act, m_max, eff_mech):
 

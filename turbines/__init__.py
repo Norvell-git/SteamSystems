@@ -2,4 +2,4 @@
 init  file
 """
 
-from .turbines import Turbine
+from .turbine import Turbine

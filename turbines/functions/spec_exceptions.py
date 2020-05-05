@@ -3,7 +3,7 @@ When passed a list of variables from turbine class this will filter out any
 over/underspecified problems.
 """
 
-from .functions import (OverSpecififedError, NonSpecifiedError)
+from .errors import (OverSpecififedError, NonSpecifiedError)
 
 def non_specd(vars):
     """
