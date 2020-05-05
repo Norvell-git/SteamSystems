@@ -7,6 +7,7 @@ setuptools.setup(
     name="SteamSystems",
     version="20.5",
     author="Kai Norvell",
+    author_email="kainorvell@gmail.com",
     description="A python package for steam/rankine cycle modelling",
     long_description=long_description,
     long_description_content_type="text/markdown",
