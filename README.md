@@ -5,11 +5,11 @@ Modelling parameters taken from Sun and Smith 2015 (Performance Modeling of New 
 
 ## *Class* turbine.Turbine(\*\*kwargs)
 #### Essential Parameters:
-`P_1`   - Turbine Inlet Pressure bara
+`P_1`   - Turbine Inlet Pressure (bara)
 
-`P_2`   - Turbine Outlet Pressure bara
+`P_2`   - Turbine Outlet Pressure (bara)
 
-`T_1`   - Turbine Inlet Temperature (inlet) degC
+`T_1`   - Turbine Inlet Temperature (degC)
 
 #### Optional Parameters:
 `m_act` - Actual mass flowrate of steam (kg/s)
