@@ -3,175 +3,176 @@ Turbine Package
 
 """
 from iapws import IAPWS97
-from MainFunctions.simplespec import simple
+from MainFunctions import (simple, workspec, heatspec, non_specd)
+from MainFunctions.errors import InputError
+
 
 class Turbine():
-	"""
-	Model a steam turbine based upon a number of specified operating conditions
-	"""
+    """
+    Model a steam turbine based upon a number of specified operating conditions
+    """
+    def __init__(self, **kwargs):
+        """
+        Essential Arguments: P_1, T_1, P_2
+        Optional Arguments: m_act, m_max, m_rat, Q, W, eff_mech
 
-	#from MainFunctions.heatspec import heatspec
-	#from MainFunctions.workspec import workspec
+        Possible Combinations:
+            m_act, m_max
+            m_act, m_rat
+            m_max, Q
+            m_rat, Q
+            Q
+            m_max, W
+            m_rat, W
+            W
+        """
 
+        # Input Verification
+        for arg in kwargs:
+            try:
+                float(kwargs[arg])
+            except ValueError:
+                raise InputError(f"Invalid Input {arg} = {kwargs[arg]}"
+                                 " must be a number")
 
-	def __init__(self, **kwargs):
-		"""
-		Essential Arguments: P_1, T_1, P_2
-		Optional Arguments: m_act, m_max, m_rat, Q, W, eff_mech
+        # Define essential arguments
+        if 'P_1' in kwargs:
+            P_1 = kwargs['P_1']
+        else:
+            raise InputError("Essential argument not defined (P_1).")
 
-		Possible Combinations:
-			m_act, m_max
-			m_act, m_rat
-			m_max, Q
-			m_rat, Q
-			Q
-			m_max, W
-			m_rat, W
-			W
-			"""
+        if 'T_1' in kwargs:
+            T_1 = kwargs['T_1']
+        else:
+            raise InputError("Essential argument not defined (T_1).")
 
+        if 'P_2' in kwargs:
+            P_2 = kwargs['P_2']
+        else:
+            raise InputError("Essential argument not defined (P_2).")
 
-		# Input Verification
-		for arg in kwargs:
-			try: 
-				float(kwargs[arg])
-			except: 
-				return print(f"Invalid Input... {kwargs[arg]}")
+        # Define optional arguments
+        eff_mech = kwargs.get('eff_mech', 0.97)
+        m_act = kwargs.get('m_act', None)
+        m_max = kwargs.get('m_max', None)
+        m_rat = kwargs.get('m_rat', None)
+        Q = kwargs.get('Q', None)
+        W = kwargs.get('W', None)
 
+        # Define IAPWS97 class items
+        inlet = IAPWS97(P=(P_1/10), T=(T_1+273.15))  # Inlet conditions
+        outlet_IS = IAPWS97(P=(P_2/10), s=inlet.s)  # Isentropic expansion
+        cond = IAPWS97(P=(P_2/10), x=0)  # Condensate
 
-		# Define essential arguments
-		if 'P_1' in kwargs:
-			P_1 = kwargs['P_1']
-		else:
-			return print("Essential Argument not Specified (P_1).")
+        # Variable list
+        variables = [m_act, Q, W, m_max, m_rat]
+        # print(variables)
+        var_bool = [x is not None for x in variables]
 
-		if 'T_1' in kwargs:
-			T_1 = kwargs['T_1']
-		else:
-			return print("Essential Argument not Specified (T_1).")
+        # Check that a problem has been specififed
+        non_specd(variables)
 
-		if 'P_2' in kwargs:
-			P_2 = kwargs['P_2']
-		else:
-			return print("Essential Argument not Specified (P_2).")
+        # Simple Spec'd Turbine
+        if var_bool[0]:
+            if var_bool[3]:
+                outlet = simple(inlet, cond, m_act, m_max, eff_mech)
 
+            elif var_bool[4]:
+                m_max = m_act * m_rat
+                outlet = simple(inlet, cond, m_act, m_max, eff_mech)
 
-		# Define optional arguments
-		if 'eff_mech' in kwargs:
-			eff_mech = kwargs['eff_mech']
-		else:
-			eff_mech = 0.97
+            else:
+                m_max = m_act
+                outlet = simple(inlet, cond, m_act, m_max, eff_mech)
 
-		if 'm_act' in kwargs:
-			m_act = kwargs['m_act']
-		else:
-			m_act = None
+        # Target Heat at Outlet, assuming full condensation
+        # Find outlet then define m_act and m_max
+        if var_bool[1]:
+            if var_bool[3]:
+                outlet = heatspec(inlet, cond, Q, eff_mech, m_max=m_max)
+                m_act = Q / (outlet.h - cond.h)
 
-		if 'm_max' in kwargs:
-			m_max = kwargs['m_max']
-		else:
-			m_max = None
+            elif var_bool[4]:
+                outlet = heatspec(inlet, cond, Q, eff_mech, m_rat=m_rat)
+                m_act = Q / (outlet.h - cond.h)
+                m_max = m_act * m_rat
 
-		if 'm_rat' in kwargs:
-			m_rat = kwargs['m_rat']
-		else:
-			m_rat = None
+            else:
+                outlet = heatspec(inlet, cond, Q, eff_mech, m_rat=1)
+                m_act = Q / (outlet.h - cond.h)
+                m_max = m_act
 
-		if 'Q' in kwargs:
-			Q = kwargs['Q']
-		else: Q = None
+        # Target Work from Turbine
+        # Find outlet then define m_act and m_max
+        if var_bool[2]:
+            if var_bool[3]:
+                outlet = workspec(inlet, outlet_IS, W, eff_mech, m_max=m_max)
+                m_act = W / (eff_mech * (inlet.h - outlet.h))
 
-		if 'W' in kwargs:
-			W = kwargs['W']
-		else:
-			W = None
+            elif var_bool[4]:
+                outlet = workspec(inlet, outlet_IS, W, eff_mech, m_rat=m_rat)
+                m_act = W / (eff_mech * (inlet.h - outlet.h))
+                m_max = m_act * m_rat
 
+            else:
+                outlet = workspec(inlet, outlet_IS, W, eff_mech, m_rat=1)
+                m_act = W / (eff_mech * (inlet.h - outlet.h))
+                m_max = m_act
 
-		# Define known parameters
-		inlet = IAPWS97(P = (P_1/10), T = (T_1+273.15))
-		outlet_IS = IAPWS97(P = (P_2/10), s = inlet.s)
-		cond = IAPWS97(P = (P_2/10), x = 0)
+        # Define the parameters
+        self.m_act = m_act
+        self.m_max = m_max
+        self.eff_mech = eff_mech
+        self.inlet = inlet
+        self.outlet = outlet
+        self.outlet_IS = outlet_IS
+        self.cond = cond
 
-		
+    # def __str__(self):
+        # Print a little diagramm showing the turbine and main conditions
 
-		# Identify and solve problem
-		if m_act == m_max == m_rat == Q == W == None:
-			return print("No problem has been specified.")
+    def work(self):
+        """
+        Calculate the shaft power produced by the Turbine
+        """
+        return self.m_act * self.eff_mech * (self.inlet.h - self.outlet.h)
 
-			
-		## Simple Spec'd Turbine
-		elif m_act != None:
-			if m_max != None:
-				if m_rat != None or Q != None or W != None: #Try better
-					return print("Problem is overspecified.")
+    def heat(self):
+        """
+        Calculate the heat content of the outlet stream, assuming full
+        condensation.
+        """
+        return self.m_act * (self.outlet.h - self.cond.h)
 
-				outlet = simple(inlet, outlet_IS, m_act, m_max, eff_mech)
+    def efficiency_IS(self):
+        """
+        Calculate the isentropic efficiency of a given Turbine.
+        """
+        return ((self.inlet.h - self.outlet.h) /
+                (self.inlet.h - self.outlet_IS.h))
 
-			elif m_rat != None:
-				if Q != None or W != None: #Try better
-					return print("Problem is overspecified.")
+    # def part_load(self, capacity):
+        """
+        Return a new Turbine class object based upon the part load perfomance
+        of an existing turbine (self), operating at part load capacity.
 
-				m_max = m_act * m_rat
-				outlet = simple(inlet, outlet_IS, m_act, m_max, eff_mech)
+        Parameters
+        ----------
+        self : Turbine
+            Predetermined Turbine class object.
+        capacity : float
+            The ratio betweent the operating mass flowrate and maximum design
+            flowrate. e.g. a turbine operating at half load would be at 0.5
+            capacity.
 
-			else:
+        Returns
+        -------
+        plt : Turbine
+            Returns part-load turbine (plt) as a new Turbine class object.
+        """
+        # m_act = self.m_max * capacity
 
-				m_max = m_act
-				outlet = simple(inlet, outlet_IS, m_act, m_max, eff_mech)
-				
-
-		## Target Heat at Outlet, assuming full condensation
-		elif Q != None:
-			if m_max != None:
-				if m_rat != None or W != None: #Try better
-					return print("Problem is overspecified.")
-
-				outlet = heatspec(m_max = m_max)
-
-			elif m_rat != None:
-				if W != None:
-					return print("Problem is overspecified.")
-
-				outlet = heatspec(m_rat = m_rat)
-
-			else:
-				
-				outlet = heatspec(m_rat = 1)
-
-
-		## Target Work from Turbine
-		elif W != None:
-			if m_max != None:
-				if m_rat != None:
-					return print("Problem is overspecified.")
-				outlet = workspec(m_max = m_max)
-
-			elif m_rat != None:
-				outlet = workspec(m_rat = m_rat)
-
-			else:
-				outlet = workspec(m_rat = 1)
-
-		# No problem found
-		else:
-			return print("No problem identified.")
-
-		# Define the parameters
-
-		self.P_1 = P_1
-		self.T_1 = T_1
-		self.h_1 = inlet.h
-		self.s_1 = inlet.s
-
-		self.P_2 = P_2
-		self.T_2 = outlet.T
-		self.h_2 = outlet.h
-		self.s_2 = outlet.s
-
-		self.Q = m_act * (outlet.h - cond.h)
-		self.W = (inlet.h - outlet.h) * (eff_mech * m_act)
-		# 	e.g et and outlet conditions, work, heat available, 
-
-
-		# Define turbine str for print (nice little diagram)
-
+        # Part load turbine may have to be new, sepperate module function
+        # plt = __init__(P_1=self.inlet.P, T_1=self.inlet.T, P_2=self.outlet.P,
+        # m_act=m_act, m_max=self.m_max)
+        # return plt
