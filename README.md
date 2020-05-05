@@ -28,7 +28,6 @@ Modelling parameters taken from Sun and Smith 2015 (Performance Modeling of New 
 
 ## To do
 
-* Exception handling
 * Include more methods
-* Create tests for each set-up and method
+* Create tests for condensing turbine
 * Documentation
