@@ -22,7 +22,7 @@ Tests should be accurate within a relative tolerance of 1% for variables:
 
 from pytest import approx
 
-from turbine import Turbine
+import SteamSystems
 
 
 # Case 1 - Test Full Load (tf):
