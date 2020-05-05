@@ -60,6 +60,7 @@ def heatspec(inlet, cond, Q, eff_mech, **max):
         # Set new flowrate
         m_act = Q / (h_out_i2 - cond.h)
 
+        print(f"{m_act:.3f}   {W:.2f}")
     # comment in/out to show final figures
     # print(f"\nFinal Iteration\ni={i}, hi={h_out_i1:.2f}, m={m_act:.2f}")
 
