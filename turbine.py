@@ -32,7 +32,7 @@ class Turbine():
             try:
                 float(kwargs[arg])
             except ValueError:
-                raise InputError(f"Invalid Input {arg} = {kwargs[arg]}"
+                raise InputError(f"Invalid Input: {arg} = {kwargs[arg]}"
                                  " must be a number")
 
         # Define essential arguments
@@ -70,33 +70,39 @@ class Turbine():
         var_bool = [x is not None for x in variables]
 
         # Check that a problem has been specififed
-        non_specd(variables)
+        non_specd(var_bool)
 
         # Simple Spec'd Turbine
         if var_bool[0]:
+            #with m_max
             if var_bool[3]:
-                outlet = simple(inlet, cond, m_act, m_max, eff_mech)
+                outlet = simple(inlet, outlet_IS, m_act, m_max, eff_mech)
 
+            # with m_rat
             elif var_bool[4]:
                 m_max = m_act * m_rat
-                outlet = simple(inlet, cond, m_act, m_max, eff_mech)
+                outlet = simple(inlet, outlet_IS, m_act, m_max, eff_mech)
 
+            # full capacity
             else:
                 m_max = m_act
-                outlet = simple(inlet, cond, m_act, m_max, eff_mech)
+                outlet = simple(inlet, outlet_IS, m_act, m_max, eff_mech)
 
         # Target Heat at Outlet, assuming full condensation
         # Find outlet then define m_act and m_max
         if var_bool[1]:
+            # with m_max
             if var_bool[3]:
                 outlet = heatspec(inlet, cond, Q, eff_mech, m_max=m_max)
                 m_act = Q / (outlet.h - cond.h)
 
+            # with m_rat
             elif var_bool[4]:
                 outlet = heatspec(inlet, cond, Q, eff_mech, m_rat=m_rat)
                 m_act = Q / (outlet.h - cond.h)
                 m_max = m_act * m_rat
 
+            # full capacity
             else:
                 outlet = heatspec(inlet, cond, Q, eff_mech, m_rat=1)
                 m_act = Q / (outlet.h - cond.h)
@@ -105,15 +111,18 @@ class Turbine():
         # Target Work from Turbine
         # Find outlet then define m_act and m_max
         if var_bool[2]:
+            # with m_max
             if var_bool[3]:
                 outlet = workspec(inlet, outlet_IS, W, eff_mech, m_max=m_max)
                 m_act = W / (eff_mech * (inlet.h - outlet.h))
 
+            # with m_rat
             elif var_bool[4]:
                 outlet = workspec(inlet, outlet_IS, W, eff_mech, m_rat=m_rat)
                 m_act = W / (eff_mech * (inlet.h - outlet.h))
                 m_max = m_act * m_rat
 
+            # full capacity
             else:
                 outlet = workspec(inlet, outlet_IS, W, eff_mech, m_rat=1)
                 m_act = W / (eff_mech * (inlet.h - outlet.h))
