@@ -10,22 +10,22 @@ Assuming: inlet(IAPWS97) and outlet_IS(IAPWS97) are defined
 """
 
 from iapws import IAPWS97
-from MainFunctions.MoreFunctions import base
+from .MoreFunctions import (f_abc, f_dh_IS, f_n, f_Wint, f_W, f_h_2)
 
 def simple(inlet, outlet_IS, m_act, m_max, eff_mech):
 
-    abc = base.abc(inlet.P*10, outlet_IS.P*10)  # Output in bara
+    abc = f_abc(inlet.P*10, outlet_IS.P*10)  # Output in bara
     a = abc[0]
     b = abc[1]
     c = abc[2]
 
-    dh_IS = base.dh_IS(inlet, outlet_IS)
+    dh_IS = f_dh_IS(inlet, outlet_IS)
 
-    n = base.n(a, b, c, dh_IS, m_max)
-    Wint = base.Wint(a, b, c, dh_IS, m_max)
+    n = f_n(a, b, c, dh_IS, m_max)
+    Wint = f_Wint(a, b, c, dh_IS, m_max)
 
-    W = base.W(m_act, n, Wint)
+    W = f_W(m_act, n, Wint)
 
-    h_2 = base.h_2(inlet, W, eff_mech, m_act)
+    h_2 = f_h_2(inlet, W, eff_mech, m_act)
 
     return IAPWS97(P=(outlet_IS.P/10), h=h_2)
