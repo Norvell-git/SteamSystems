@@ -10,7 +10,7 @@ Assuming: inlet(IAPWS97) and outlet_IS(IAPWS97) are defined
 
 """
 from iapws import IAPWS97
-from .MoreFunctions import (f_abc, f_dh_IS, f_n, f_Wint, f_W, f_h_2)
+from .functions import (f_abc, f_dh_IS, f_n, f_Wint, f_W, f_h_2)
 
 def heatspec(inlet, cond, Q, eff_mech, **max):
 
