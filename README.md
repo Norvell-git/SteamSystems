@@ -1,5 +1,7 @@
 # steamy
-**WIP** Model a simple steam turbine using Willans Line model and IAPWS-IF97 steam tables.
+**WIP** A python program for modelling simple Rankine cycles or steam systems.
+
+Model a simple steam turbine using Willans Line model and IAPWS-IF97 steam tables.
 
 Modelling parameters taken from Sun and Smith 2015 (Performance Modeling of New and Existing Steam Turbines).
 
