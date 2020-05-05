@@ -2,7 +2,7 @@
 Basic functions required for turbine models
 """
 
-def abc(P_1, P_2):
+def f_abc(P_1, P_2):
     """
     Modelling parameters from Sun and Smith 2015
     """
@@ -16,31 +16,31 @@ def abc(P_1, P_2):
         c = 0.20515   - 6.9517e-4 * P_1 + 2.8446e-3 * P_2
     return [a, b, c]
 
-def dh_IS(inlet, outlet_IS):
+def f_dh_IS(inlet, outlet_IS):
     """
     Calculate isentropice entropy change
     """
     return inlet.h - outlet_IS.h
 
-def n(a, b, c, dh_IS, m_max):
+def f_n(a, b, c, dh_IS, m_max):
     """
     gradient of Willans Line
     """
     return (1+c)/a * (dh_IS - b/m_max)
 
-def Wint(a, b, c, dh_IS, m_max):
+def f_Wint(a, b, c, dh_IS, m_max):
     """
     y-intercept of Willans Line
     """
     return (c/a)*(m_max*dh_IS - b)
 
-def W(m_act, n, Wint):
+def f_W(m_act, n, Wint):
     """
     Calculate shaft power
     """
     return m_act * n - Wint
 
-def h_2(inlet, W, eff_mech, m_act):
+def f_h_2(inlet, W, eff_mech, m_act):
     """
     Outlet entropy from shaft power
     """
