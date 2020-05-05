@@ -3,8 +3,8 @@ Turbine Package
 
 """
 from iapws import IAPWS97
-from MainFunctions import (simple, workspec, heatspec, non_specd)
-from MainFunctions.errors import InputError
+from functions import (simple, workspec, heatspec, non_specd)
+from functions import InputError
 
 
 class Turbine():
