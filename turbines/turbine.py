@@ -1,10 +1,10 @@
 """
-Turbine Package
+Turbine Class Package
 
 """
 from iapws import IAPWS97
-from functions import (simple, workspec, heatspec, non_specd)
-from functions import InputError
+
+from functions import (simple, workspec, heatspec, non_specd, InputError)
 
 
 class Turbine():
