@@ -33,3 +33,4 @@ Modelling parameters taken from Sun and Smith 2015 (Performance Modeling of New 
 * Include more methods
 * Create tests for condensing turbine
 * Documentation
+* Integrate IF97 model
