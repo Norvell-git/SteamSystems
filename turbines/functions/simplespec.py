@@ -29,4 +29,4 @@ def simple(inlet, outlet_IS, m_act, m_max, eff_mech):
 
     h_2 = f_h_2(inlet, W, eff_mech, m_act)
 
-    return IAPWS97(P=(outlet_IS.P/10), h=h_2)
+    return IAPWS97(P=(outlet_IS.P), h=h_2)

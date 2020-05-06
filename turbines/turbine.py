@@ -4,7 +4,7 @@ Turbine Class Package
 """
 from iapws import IAPWS97
 
-from .functions import (simple, workspec, heatspec, non_specd, InputError)
+from functions import (simple, workspec, heatspec, non_specd, InputError)
 
 
 class Turbine():
@@ -132,10 +132,23 @@ class Turbine():
         self.m_act = m_act
         self.m_max = m_max
         self.eff_mech = eff_mech
-        self.inlet = inlet
-        self.outlet = outlet
-        self.outlet_IS = outlet_IS
-        self.cond = cond
+
+        # Convert outlet back to bara and degC
+        self.inlet   = inlet
+        self.inlet.P = inlet.P * 10
+        self.inlet.T = inlet.T - 273.15
+
+        self.outlet   = outlet
+        self.outlet.P = outlet.P * 10
+        self.outlet.T = outlet.T - 273.15
+
+        self.outlet_IS   = outlet_IS
+        self.outlet_IS.P = outlet_IS.P * 10
+        self.outlet_IS.T = outlet_IS.T - 273.15
+
+        self.cond   = cond
+        self.cond.P = cond.P * 10
+        self.cond.T = cond.T - 273.15
 
     # def __str__(self):
         # Print a little diagramm showing the turbine and main conditions
